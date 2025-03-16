@@ -95,53 +95,53 @@
       when: ansible_network_os is defined and ansible_network_os == 'junipernetworks.junos.junos'
       
     # Fortinet devices
-    - name: Get configuration (Fortinet)
-      fortinet.fortios.fortios_config:
-        backup: yes
-        backup_options:
-          filename: "{{ inventory_hostname }}_config.{{ current_date }}"
-          dir_path: "{{ repo_path }}/playbooks/backup"
-      register: fortinet_config_output
-      when: ansible_network_os is defined and ansible_network_os == 'fortinet.fortios.fortios'
+    #- name: Get configuration (Fortinet)
+     # fortinet.fortios.fortios_config:
+      #  backup: yes
+       # backup_options:
+        #  filename: "{{ inventory_hostname }}_config.{{ current_date }}"
+         # dir_path: "{{ repo_path }}/playbooks/backup"
+      #register: fortinet_config_output
+      #when: ansible_network_os is defined and ansible_network_os == 'fortinet.fortios.fortios'
       
     # Arista devices
-    - name: Get configuration (Arista)
-      arista.eos.eos_config:
-        backup: yes
-        backup_options:
-          filename: "{{ inventory_hostname }}_config.{{ current_date }}"
-          dir_path: "{{ repo_path }}/playbooks/backup"
-      register: arista_config_output
-      when: ansible_network_os is defined and ansible_network_os == 'arista.eos.eos'
+    #- name: Get configuration (Arista)
+     # arista.eos.eos_config:
+      #  backup: yes
+       # backup_options:
+        #  filename: "{{ inventory_hostname }}_config.{{ current_date }}"
+         # dir_path: "{{ repo_path }}/playbooks/backup"
+      #register: arista_config_output
+      #when: ansible_network_os is defined and ansible_network_os == 'arista.eos.eos'
     
     # Additional vendor backup commands for those that don't support backup option
-    - name: Get configuration (Aruba AOS-Switch)
-      arubanetworks.aos_switch.aoscl_command:
-        commands:
-          - show running-config
+   # - name: Get configuration (Aruba AOS-Switch)
+    #  arubanetworks.aos_switch.aoscl_command:
+     #   commands:
+      #    - show running-config
       register: aruba_aos_config_output
-      when: ansible_network_os is defined and ansible_network_os == 'arubanetworks.aos_switch.aoscl'
+      #when: ansible_network_os is defined and ansible_network_os == 'arubanetworks.aos_switch.aoscl'
     
-    - name: Get configuration (Aruba AOS-CX)
-      arubanetworks.aoscx.aoscx_command:
-        commands:
-          - show running-config
-      register: aruba_aoscx_config_output
-      when: ansible_network_os is defined and ansible_network_os == 'arubanetworks.aoscx.aoscx'
+    #- name: Get configuration (Aruba AOS-CX)
+     # arubanetworks.aoscx.aoscx_command:
+      #  commands:
+       #   - show running-config
+      #register: aruba_aoscx_config_output
+      #when: ansible_network_os is defined and ansible_network_os == 'arubanetworks.aoscx.aoscx'
     
-    - name: Get configuration (Palo Alto)
-      paloaltonetworks.panos.panos_command:
-        commands:
-          - show config running
-      register: paloalto_config_output
-      when: ansible_network_os is defined and ansible_network_os == 'paloaltonetworks.panos.panos'
+    #- name: Get configuration (Palo Alto)
+     # paloaltonetworks.panos.panos_command:
+      #  commands:
+       #   - show config running
+      #register: paloalto_config_output
+      #when: ansible_network_os is defined and ansible_network_os == 'paloaltonetworks.panos.panos'
       
-    - name: Get configuration (SonicWall)
-      ansible.netcommon.net_command:
-        commands:
-          - show current-config
-      register: sonicwall_config_output
-      when: ansible_network_os is defined and ansible_network_os == 'sonicwall'
+    #- name: Get configuration (SonicWall)
+     # ansible.netcommon.net_command:
+      #  commands:
+       #   - show current-config
+      #register: sonicwall_config_output
+      #when: ansible_network_os is defined and ansible_network_os == 'sonicwall'
       
     # Save configurations for vendors without built-in backup
     - name: Save Aruba AOS-Switch config to file

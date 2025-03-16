@@ -86,82 +86,82 @@
       async: 30
       poll: 0
       
-    - name: Capture MAC address table (Aruba AOS-Switch)
-      arubanetworks.aos_switch.aoscl_command:
-        commands: 
-          - show mac-address
-          - show vlan
-      register: aruba_aos_output
-      when: ansible_network_os is defined and ansible_network_os == 'arubanetworks.aos_switch.aoscl'
-      ignore_errors: yes
-      async: 30
-      poll: 0
+    #- name: Capture MAC address table (Aruba AOS-Switch)
+     # arubanetworks.aos_switch.aoscl_command:
+      #  commands: 
+       #   - show mac-address
+        #  - show vlan
+      #register: aruba_aos_output
+      #when: ansible_network_os is defined and ansible_network_os == 'arubanetworks.aos_switch.aoscl'
+      #ignore_errors: yes
+      #async: 30
+      #poll: 0
       
-    - name: Capture MAC address table (Aruba AOS-CX)
-      arubanetworks.aoscx.aoscx_command:
-        commands: 
-          - show mac-address-table
-          - show vlan
-      register: aruba_aoscx_output
-      when: ansible_network_os is defined and ansible_network_os == 'arubanetworks.aoscx.aoscx'
-      ignore_errors: yes
-      async: 30
-      poll: 0
+    #- name: Capture MAC address table (Aruba AOS-CX)
+     # arubanetworks.aoscx.aoscx_command:
+      #  commands: 
+       #   - show mac-address-table
+        #  - show vlan
+      #register: aruba_aoscx_output
+      #when: ansible_network_os is defined and ansible_network_os == 'arubanetworks.aoscx.aoscx'
+      #ignore_errors: yes
+      #async: 30
+      #poll: 0
       
-    - name: Capture MAC address table (Juniper)
-      junipernetworks.junos.junos_command:
-        commands: 
-          - show ethernet-switching table
-          - show vlans
-      register: juniper_output
-      when: ansible_network_os is defined and ansible_network_os == 'junipernetworks.junos.junos'
-      ignore_errors: yes
-      async: 30
-      poll: 0
+    #- name: Capture MAC address table (Juniper)
+     # junipernetworks.junos.junos_command:
+      #  commands: 
+       #   - show ethernet-switching table
+        #  - show vlans
+      #register: juniper_output
+      #when: ansible_network_os is defined and ansible_network_os == 'junipernetworks.junos.junos'
+      #ignore_errors: yes
+      #async: 30
+      #poll: 0
       
-    - name: Capture MAC address table (Fortinet)
-      fortinet.fortios.fortios_command:
-        commands: 
-          - get system mac-address-table
-          - get system interface
-      register: fortinet_output
-      when: ansible_network_os is defined and ansible_network_os == 'fortinet.fortios.fortios'
-      ignore_errors: yes
-      async: 30
-      poll: 0
+    #- name: Capture MAC address table (Fortinet)
+    #  fortinet.fortios.fortios_command:
+     #   commands: 
+      #    - get system mac-address-table
+       #   - get system interface
+      #register: fortinet_output
+      #when: ansible_network_os is defined and ansible_network_os == 'fortinet.fortios.fortios'
+      #ignore_errors: yes
+      #async: 30
+      #poll: 0
       
-    - name: Capture MAC address table (Arista)
-      arista.eos.eos_command:
-        commands: 
-          - show mac address-table
-          - show vlan
-      register: arista_output
-      when: ansible_network_os is defined and ansible_network_os == 'arista.eos.eos'
-      ignore_errors: yes
-      async: 30
-      poll: 0
+    #- name: Capture MAC address table (Arista)
+     # arista.eos.eos_command:
+      #  commands: 
+       #   - show mac address-table
+        #  - show vlan
+      #register: arista_output
+      #when: ansible_network_os is defined and ansible_network_os == 'arista.eos.eos'
+      #ignore_errors: yes
+      #async: 30
+      #poll: 0
       
-    - name: Capture MAC address table (Palo Alto)
-      paloaltonetworks.panos.panos_command:
-        commands: 
-          - show arp all
-          - show routing
-      register: paloalto_output
-      when: ansible_network_os is defined and ansible_network_os == 'paloaltonetworks.panos.panos'
-      ignore_errors: yes
-      async: 30
-      poll: 0
+    #- name: Capture MAC address table (Palo Alto)
+     # paloaltonetworks.panos.panos_command:
+     #   commands: 
+      #    - show arp all
+       #   - show routing
+      #register: paloalto_output
+      #when: ansible_network_os is defined and ansible_network_os == 'paloaltonetworks.panos.panos'
+      #ignore_errors: yes
+      #async: 30
+      #poll: 0
       
-    - name: Capture MAC address table (SonicWall)
-      ansible.netcommon.net_command:
-        commands: 
-          - show arp
-          - show interface status
-      register: sonicwall_output
-      when: ansible_network_os is defined and ansible_network_os == 'sonicwall'
-      ignore_errors: yes
-      async: 30
-      poll: 0
+    #- name: Capture MAC address table (SonicWall)
+     # ansible.netcommon.net_command:
+      #  commands: 
+       #   - show arp
+        #  - show interface status
+      #register: sonicwall_output
+      #when: ansible_network_os is defined and ansible_network_os == 'sonicwall'
+      #ignore_errors: yes
+      #async: 30
+      #poll: 0
     
     # Wait for command completion with timeout
     - name: Wait for Cisco IOS command
