@@ -47,3 +47,6 @@ logs/
 
 # Specific to this project
 .vault_password
+
+#
+add_device.sh
