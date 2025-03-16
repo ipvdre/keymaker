@@ -49,4 +49,8 @@ logs/
 .vault_password
 
 #
+<<<<<<< HEAD
 add_device.sh
+=======
+.add_device.sh
+>>>>>>> 0131a56195e523fbebe88e8d88d71de621bb805a
