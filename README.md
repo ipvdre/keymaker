@@ -59,16 +59,6 @@ Run tasks targeting specific device categories:
 - All Cisco devices: `ansible cisco_ios:cisco_nxos:cisco_iosxe -m ping`
 - Specific location: `ansible newyork -m ping`
 
-## Adding New Devices
-
-To add new devices, run the `./add_device.sh` script and follow the prompts.
-The script will:
-- Add the device to the proper location group
-- Categorize it by device type (firewall, router, switch)
-- Categorize it by OS type
-- Set up secure credential storage
-- Test connectivity
-
 ## Security Notes
 
 - All credentials are stored in individual encrypted vault files
