@@ -6,6 +6,7 @@
 
 # Locations will be added here
 [zion]
+SwitchA ansible_host=10.1.5.2
 Central_Office ansible_host=10.1.1.2
 # devices will be added here
 
@@ -30,6 +31,7 @@ Central_Office
 # Layer 2 switch devices will be added here
 
 [layer3_switches]
+SwitchA
 # Layer 3 switch devices will be added here
 
 [all_switches:children]
