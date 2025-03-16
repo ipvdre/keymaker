@@ -5,6 +5,10 @@
 # =====================================================
 
 # Locations will be added here
+[zion]
+Central_Office ansible_host=10.1.1.2
+# devices will be added here
+
 # Example:
 # [newyork]
 # nyc_router_1 ansible_host=10.1.1.1
@@ -19,6 +23,7 @@
 # Firewall devices will be added here
 
 [routers]
+Central_Office
 # Router devices will be added here
 
 [layer2_switches]
@@ -35,6 +40,7 @@ layer3_switches
 firewalls
 routers
 all_switches
+zion
 # locations will be added here
 
 # =====================================================
@@ -42,6 +48,7 @@ all_switches
 # =====================================================
 
 [cisco_ios:children]
+zion
 # cisco ios devices will be added here
 
 [cisco_nxos:children]
