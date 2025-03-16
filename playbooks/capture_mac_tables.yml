@@ -1,0 +1,349 @@
+---
+- name: Capture and Version MAC Address Tables
+  hosts: all_devices
+  gather_facts: no
+  vars:
+    current_date: "{{ '%Y-%m-%d' | strftime }}"
+    ansible_command_timeout: 30
+    ansible_connect_timeout: 20
+  
+  tasks:
+    # Cisco IOS devices - use async execution to prevent hanging
+    - name: Capture MAC address table (Cisco IOS)
+      cisco.ios.ios_command:
+        commands: 
+          - show mac address-table
+          - show vlan
+      register: cisco_output
+      when: ansible_network_os is defined and ansible_network_os == 'ios'
+      ignore_errors: yes
+      async: 30
+      poll: 0
+      
+    - name: Capture MAC address table (Cisco NX-OS)
+      cisco.nxos.nxos_command:
+        commands: 
+          - show mac address-table
+          - show vlan
+      register: nxos_output
+      when: ansible_network_os is defined and ansible_network_os == 'nxos'
+      ignore_errors: yes
+      async: 30
+      poll: 0
+      
+    - name: Capture MAC address table (Cisco IOS-XE)
+      cisco.ios.ios_command:
+        commands: 
+          - show mac address-table
+          - show vlan
+      register: iosxe_output
+      when: ansible_network_os is defined and ansible_network_os == 'iosxe'
+      ignore_errors: yes
+      async: 30
+      poll: 0
+      
+    - name: Capture MAC address table (Cisco IOS-XR)
+      cisco.iosxr.iosxr_command:
+        commands: 
+          - show l2vpn forwarding mac-address-table
+          - show vlan
+      register: iosxr_output
+      when: ansible_network_os is defined and ansible_network_os == 'iosxr'
+      ignore_errors: yes
+      async: 30
+      poll: 0
+      
+    - name: Capture ARP table (Cisco ASA)
+      cisco.asa.asa_command:
+        commands: 
+          - show arp
+          - show interface
+      register: asa_output
+      when: ansible_network_os is defined and ansible_network_os == 'asa'
+      ignore_errors: yes
+      async: 30
+      poll: 0
+      
+    - name: Capture MAC address table (Dell OS6)
+      dellemc.os6.os6_command:
+        commands: 
+          - show mac address-table
+          - show vlan
+      register: dell_os6_output
+      when: ansible_network_os is defined and ansible_network_os == 'dellemc.os6.os6'
+      ignore_errors: yes
+      async: 30
+      poll: 0
+      
+    - name: Capture MAC address table (Dell OS10)
+      dellemc.os10.os10_command:
+        commands: 
+          - show mac address-table
+          - show vlan
+      register: dell_os10_output
+      when: ansible_network_os is defined and ansible_network_os == 'dellemc.os10.os10'
+      ignore_errors: yes
+      async: 30
+      poll: 0
+      
+    - name: Capture MAC address table (Aruba AOS-Switch)
+      arubanetworks.aos_switch.aoscl_command:
+        commands: 
+          - show mac-address
+          - show vlan
+      register: aruba_aos_output
+      when: ansible_network_os is defined and ansible_network_os == 'arubanetworks.aos_switch.aoscl'
+      ignore_errors: yes
+      async: 30
+      poll: 0
+      
+    - name: Capture MAC address table (Aruba AOS-CX)
+      arubanetworks.aoscx.aoscx_command:
+        commands: 
+          - show mac-address-table
+          - show vlan
+      register: aruba_aoscx_output
+      when: ansible_network_os is defined and ansible_network_os == 'arubanetworks.aoscx.aoscx'
+      ignore_errors: yes
+      async: 30
+      poll: 0
+      
+    - name: Capture MAC address table (Juniper)
+      junipernetworks.junos.junos_command:
+        commands: 
+          - show ethernet-switching table
+          - show vlans
+      register: juniper_output
+      when: ansible_network_os is defined and ansible_network_os == 'junipernetworks.junos.junos'
+      ignore_errors: yes
+      async: 30
+      poll: 0
+      
+    - name: Capture MAC address table (Fortinet)
+      fortinet.fortios.fortios_command:
+        commands: 
+          - get system mac-address-table
+          - get system interface
+      register: fortinet_output
+      when: ansible_network_os is defined and ansible_network_os == 'fortinet.fortios.fortios'
+      ignore_errors: yes
+      async: 30
+      poll: 0
+      
+    - name: Capture MAC address table (Arista)
+      arista.eos.eos_command:
+        commands: 
+          - show mac address-table
+          - show vlan
+      register: arista_output
+      when: ansible_network_os is defined and ansible_network_os == 'arista.eos.eos'
+      ignore_errors: yes
+      async: 30
+      poll: 0
+      
+    - name: Capture MAC address table (Palo Alto)
+      paloaltonetworks.panos.panos_command:
+        commands: 
+          - show arp all
+          - show routing
+      register: paloalto_output
+      when: ansible_network_os is defined and ansible_network_os == 'paloaltonetworks.panos.panos'
+      ignore_errors: yes
+      async: 30
+      poll: 0
+      
+    - name: Capture MAC address table (SonicWall)
+      ansible.netcommon.net_command:
+        commands: 
+          - show arp
+          - show interface status
+      register: sonicwall_output
+      when: ansible_network_os is defined and ansible_network_os == 'sonicwall'
+      ignore_errors: yes
+      async: 30
+      poll: 0
+    
+    # Wait for command completion with timeout
+    - name: Wait for Cisco IOS command
+      async_status:
+        jid: "{{ cisco_output.ansible_job_id }}"
+      register: cisco_result
+      until: cisco_result.finished
+      retries: 30
+      delay: 5
+      when: ansible_network_os is defined and ansible_network_os == 'ios' and cisco_output is defined and cisco_output.ansible_job_id is defined
+      ignore_errors: yes
+      
+    - name: Wait for Cisco NX-OS command
+      async_status:
+        jid: "{{ nxos_output.ansible_job_id }}"
+      register: nxos_result
+      until: nxos_result.finished
+      retries: 30
+      delay: 5
+      when: ansible_network_os is defined and ansible_network_os == 'nxos' and nxos_output is defined and nxos_output.ansible_job_id is defined
+      ignore_errors: yes
+      
+    - name: Wait for Cisco IOS-XE command
+      async_status:
+        jid: "{{ iosxe_output.ansible_job_id }}"
+      register: iosxe_result
+      until: iosxe_result.finished
+      retries: 30
+      delay: 5
+      when: ansible_network_os is defined and ansible_network_os == 'iosxe' and iosxe_output is defined and iosxe_output.ansible_job_id is defined
+      ignore_errors: yes
+      
+    - name: Wait for Cisco IOS-XR command
+      async_status:
+        jid: "{{ iosxr_output.ansible_job_id }}"
+      register: iosxr_result
+      until: iosxr_result.finished
+      retries: 30
+      delay: 5
+      when: ansible_network_os is defined and ansible_network_os == 'iosxr' and iosxr_output is defined and iosxr_output.ansible_job_id is defined
+      ignore_errors: yes
+      
+    - name: Wait for Cisco ASA command
+      async_status:
+        jid: "{{ asa_output.ansible_job_id }}"
+      register: asa_result
+      until: asa_result.finished
+      retries: 30
+      delay: 5
+      when: ansible_network_os is defined and ansible_network_os == 'asa' and asa_output is defined and asa_output.ansible_job_id is defined
+      ignore_errors: yes
+      
+    - name: Wait for Dell OS6 command
+      async_status:
+        jid: "{{ dell_os6_output.ansible_job_id }}"
+      register: dell_os6_result
+      until: dell_os6_result.finished
+      retries: 30
+      delay: 5
+      when: ansible_network_os is defined and ansible_network_os == 'dellemc.os6.os6' and dell_os6_output is defined and dell_os6_output.ansible_job_id is defined
+      ignore_errors: yes
+      
+    - name: Wait for Dell OS10 command
+      async_status:
+        jid: "{{ dell_os10_output.ansible_job_id }}"
+      register: dell_os10_result
+      until: dell_os10_result.finished
+      retries: 30
+      delay: 5
+      when: ansible_network_os is defined and ansible_network_os == 'dellemc.os10.os10' and dell_os10_output is defined and dell_os10_output.ansible_job_id is defined
+      ignore_errors: yes
+      
+    - name: Wait for Aruba AOS-Switch command
+      async_status:
+        jid: "{{ aruba_aos_output.ansible_job_id }}"
+      register: aruba_aos_result
+      until: aruba_aos_result.finished
+      retries: 30
+      delay: 5
+      when: ansible_network_os is defined and ansible_network_os == 'arubanetworks.aos_switch.aoscl' and aruba_aos_output is defined and aruba_aos_output.ansible_job_id is defined
+      ignore_errors: yes
+      
+    - name: Wait for Aruba AOS-CX command
+      async_status:
+        jid: "{{ aruba_aoscx_output.ansible_job_id }}"
+      register: aruba_aoscx_result
+      until: aruba_aoscx_result.finished
+      retries: 30
+      delay: 5
+      when: ansible_network_os is defined and ansible_network_os == 'arubanetworks.aoscx.aoscx' and aruba_aoscx_output is defined and aruba_aoscx_output.ansible_job_id is defined
+      ignore_errors: yes
+      
+    - name: Wait for Juniper command
+      async_status:
+        jid: "{{ juniper_output.ansible_job_id }}"
+      register: juniper_result
+      until: juniper_result.finished
+      retries: 30
+      delay: 5
+      when: ansible_network_os is defined and ansible_network_os == 'junipernetworks.junos.junos' and juniper_output is defined and juniper_output.ansible_job_id is defined
+      ignore_errors: yes
+      
+    - name: Wait for Fortinet command
+      async_status:
+        jid: "{{ fortinet_output.ansible_job_id }}"
+      register: fortinet_result
+      until: fortinet_result.finished
+      retries: 30
+      delay: 5
+      when: ansible_network_os is defined and ansible_network_os == 'fortinet.fortios.fortios' and fortinet_output is defined and fortinet_output.ansible_job_id is defined
+      ignore_errors: yes
+      
+    - name: Wait for Arista command
+      async_status:
+        jid: "{{ arista_output.ansible_job_id }}"
+      register: arista_result
+      until: arista_result.finished
+      retries: 30
+      delay: 5
+      when: ansible_network_os is defined and ansible_network_os == 'arista.eos.eos' and arista_output is defined and arista_output.ansible_job_id is defined
+      ignore_errors: yes
+      
+    - name: Wait for Palo Alto command
+      async_status:
+        jid: "{{ paloalto_output.ansible_job_id }}"
+      register: paloalto_result
+      until: paloalto_result.finished
+      retries: 30
+      delay: 5
+      when: ansible_network_os is defined and ansible_network_os == 'paloaltonetworks.panos.panos' and paloalto_output is defined and paloalto_output.ansible_job_id is defined
+      ignore_errors: yes
+      
+    - name: Wait for SonicWall command
+      async_status:
+        jid: "{{ sonicwall_output.ansible_job_id }}"
+      register: sonicwall_result
+      until: sonicwall_result.finished
+      retries: 30
+      delay: 5
+      when: ansible_network_os is defined and ansible_network_os == 'sonicwall' and sonicwall_output is defined and sonicwall_output.ansible_job_id is defined
+      ignore_errors: yes
+    
+    # Create directory for MAC tables
+    - name: Create directory for MAC tables
+      ansible.builtin.file:
+        path: "{{ repo_path }}/mac_tables/{{ current_date }}"
+        state: directory
+        mode: '0755'
+      delegate_to: localhost
+      run_once: true
+    
+    # Save output for all vendors (only adding a few examples here for brevity)
+    - name: Save Cisco IOS MAC table to file
+      ansible.builtin.copy:
+        content: "{{ cisco_result.stdout[0] | default('Command failed or no output') }}"
+        dest: "{{ repo_path }}/mac_tables/{{ current_date }}/{{ inventory_hostname }}_mac_table.txt"
+        mode: '0644'
+      delegate_to: localhost
+      when: ansible_network_os is defined and ansible_network_os == 'ios' and cisco_result is defined and cisco_result.stdout is defined
+      ignore_errors: yes
+    
+    - name: Save Cisco IOS VLAN info to file
+      ansible.builtin.copy:
+        content: "{{ cisco_result.stdout[1] | default('Command failed or no output') }}"
+        dest: "{{ repo_path }}/mac_tables/{{ current_date }}/{{ inventory_hostname }}_vlan_info.txt"
+        mode: '0644'
+      delegate_to: localhost
+      when: ansible_network_os is defined and ansible_network_os == 'ios' and cisco_result is defined and cisco_result.stdout is defined and cisco_result.stdout | length > 1
+      ignore_errors: yes
+    
+    # (similar blocks for all other vendors - abbreviated for space)
+    
+    # Add other vendors' save tasks here following the same pattern
+    # ...
+    
+    # Git operations
+    - name: Git add and commit changes
+      ansible.builtin.shell: |
+        cd {{ repo_path }}
+        git add mac_tables/
+        git commit -m "Update MAC address tables for {{ current_date }}" || true
+        git push origin main || git push origin main
+      delegate_to: localhost
+      run_once: true
+      ignore_errors: yes

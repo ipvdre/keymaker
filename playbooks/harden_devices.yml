@@ -1,0 +1,185 @@
+---
+- name: Harden Network Devices
+  hosts: all_devices
+  gather_facts: no
+  
+  tasks:
+    # Cisco IOS Hardening
+    - name: Configure security settings (Cisco IOS)
+      cisco.ios.ios_config:
+        lines:
+          - service password-encryption
+          - no service pad
+          - no ip http server
+          - ip http secure-server
+          - login block-for 120 attempts 3 within 60
+          - ip ssh version 2
+          - ip ssh authentication-retries 3
+          - ip ssh time-out 60
+        save_when: modified
+      when: ansible_network_os is defined and ansible_network_os == 'ios'
+    
+    # Cisco NX-OS Hardening
+    - name: Configure security settings (Cisco NX-OS)
+      cisco.nxos.nxos_config:
+        lines:
+          - feature ssh
+          - no feature telnet
+          - no feature http-server
+          - ssh key-exchange group dh-group14-sha1
+          - ssh server password-auth no
+        save_when: modified
+      when: ansible_network_os is defined and ansible_network_os == 'nxos'
+      
+    # Cisco IOS-XE Hardening (uses same module as IOS)
+    - name: Configure security settings (Cisco IOS-XE)
+      cisco.ios.ios_config:
+        lines:
+          - service password-encryption
+          - no service pad
+          - no ip http server
+          - ip http secure-server
+          - login block-for 120 attempts 3 within 60
+          - ip ssh version 2
+          - ip ssh authentication-retries 3
+          - ip ssh time-out 60
+        save_when: modified
+      when: ansible_network_os is defined and ansible_network_os == 'iosxe'
+      
+    # Cisco IOS-XR Hardening
+    - name: Configure security settings (Cisco IOS-XR)
+      cisco.iosxr.iosxr_config:
+        lines:
+          - ssh server v2
+          - ssh server vrf default
+          - telnet vrf default disable
+          - http server ssl
+          - http server disable
+        save_when: modified
+      when: ansible_network_os is defined and ansible_network_os == 'iosxr'
+      
+    # Cisco ASA Hardening
+    - name: Configure security settings (Cisco ASA)
+      cisco.asa.asa_config:
+        lines:
+          - ssh version 2
+          - ssh timeout 60
+          - no http server enable
+          - http server enable tls-only
+        save_when: modified
+      when: ansible_network_os is defined and ansible_network_os == 'asa'
+    
+    # Dell OS6 Hardening
+    - name: Configure security settings (Dell OS6)
+      dellemc.os6.os6_config:
+        lines:
+          - service password-encryption
+          - no ip http server
+          - ip ssh server
+          - ip ssh authentication-retries 3
+          - ip ssh timeout 60
+        save_when: modified
+      when: ansible_network_os is defined and ansible_network_os == 'dellemc.os6.os6'
+    
+    # Dell OS10 Hardening
+    - name: Configure security settings (Dell OS10)
+      dellemc.os10.os10_config:
+        lines:
+          - service password-encryption
+          - no ip http server
+          - ip ssh server
+          - ip ssh authentication-retries 3
+          - ip ssh timeout 60
+        save_when: modified
+      when: ansible_network_os is defined and ansible_network_os == 'dellemc.os10.os10'
+    
+    # Aruba AOS-Switch Hardening
+    - name: Configure security settings (Aruba AOS-Switch)
+      arubanetworks.aos_switch.aoscl_command:
+        commands:
+          - configure terminal
+          - no telnet-server
+          - no web-management plaintext
+          - web-management ssl
+          - crypto key generate ssh
+          - write memory
+      when: ansible_network_os is defined and ansible_network_os == 'arubanetworks.aos_switch.aoscl'
+    
+    # Aruba AOS-CX Hardening
+    - name: Configure security settings (Aruba AOS-CX)
+      arubanetworks.aoscx.aoscx_command:
+        commands:
+          - configure terminal
+          - ssh server vrf default
+          - no telnet server vrf default
+          - https server vrf default
+          - write memory
+      when: ansible_network_os is defined and ansible_network_os == 'arubanetworks.aoscx.aoscx'
+      
+    # Juniper Hardening
+    - name: Configure security settings (Juniper)
+      junipernetworks.junos.junos_config:
+        lines:
+          - set system services ssh protocol-version v2
+          - set system services ssh rate-limit 10
+          - set system services ssh connection-limit 10
+          - set system services ssh root-login deny
+          - set system services delete telnet
+          - set system services web-management https
+          - delete system services web-management http
+        save_when: modified
+      when: ansible_network_os is defined and ansible_network_os == 'junipernetworks.junos.junos'
+      
+    # Fortinet Hardening
+    - name: Configure security settings (Fortinet)
+      fortinet.fortios.fortios_config:
+        lines:
+          - config system global
+          - set admin-https-redirect enable
+          - set admin-telnet disable
+          - set admin-ssh-port 22
+          - set admin-ssh-v1 disable
+          - set admin-lockout-threshold 3
+          - set admin-lockout-duration 300
+          - end
+        save_when: modified
+      when: ansible_network_os is defined and ansible_network_os == 'fortinet.fortios.fortios'
+      
+    # Arista Hardening
+    - name: Configure security settings (Arista)
+      arista.eos.eos_config:
+        lines:
+          - management ssh
+          - authentication mode password
+          - idle-timeout 15
+          - no management telnet
+          - service https
+          - no service http
+          - management security
+          - ssl profile default
+        save_when: modified
+      when: ansible_network_os is defined and ansible_network_os == 'arista.eos.eos'
+      
+    # Palo Alto Hardening
+    - name: Configure security settings (Palo Alto)
+      paloaltonetworks.panos.panos_command:
+        commands:
+          - set deviceconfig system permitted-ip 
+          - set deviceconfig setting management idle-timeout 10
+          - set deviceconfig setting management auto-acquire-commit-lock yes
+        cmd_timeout: 60
+      when: ansible_network_os is defined and ansible_network_os == 'paloaltonetworks.panos.panos'
+      
+    # SonicWall Hardening
+    - name: Configure security settings (SonicWall)
+      ansible.netcommon.net_command:
+        commands:
+          - config
+          - no http-management
+          - https-management
+          - admin-timeout 15
+          - ssh-management
+          - no telnet-management
+          - commit
+        cmd_timeout: 60
+      when: ansible_network_os is defined and ansible_network_os == 'sonicwall'

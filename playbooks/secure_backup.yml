@@ -1,0 +1,194 @@
+---
+- name: Securely Backup Network Configurations
+  hosts: all_devices
+  gather_facts: no
+  vars:
+    current_date: "{{ '%Y-%m-%d' | strftime }}"
+  
+  tasks:
+    - name: Create backup directory
+      ansible.builtin.file:
+        path: "{{ repo_path }}/playbooks/backup"
+        state: directory
+        mode: '0755'
+      delegate_to: localhost
+      run_once: true
+    
+    # Cisco IOS devices
+    - name: Get configuration (Cisco IOS)
+      cisco.ios.ios_config:
+        backup: yes
+        backup_options:
+          filename: "{{ inventory_hostname }}_config.{{ current_date }}"
+          dir_path: "{{ repo_path }}/playbooks/backup"
+      register: cisco_config_output
+      when: ansible_network_os is defined and ansible_network_os == 'ios'
+    
+    # Cisco NX-OS devices
+    - name: Get configuration (Cisco NX-OS)
+      cisco.nxos.nxos_config:
+        backup: yes
+        backup_options:
+          filename: "{{ inventory_hostname }}_config.{{ current_date }}"
+          dir_path: "{{ repo_path }}/playbooks/backup"
+      register: nxos_config_output
+      when: ansible_network_os is defined and ansible_network_os == 'nxos'
+    
+    # Cisco IOS-XE devices
+    - name: Get configuration (Cisco IOS-XE)
+      cisco.ios.ios_config:
+        backup: yes
+        backup_options:
+          filename: "{{ inventory_hostname }}_config.{{ current_date }}"
+          dir_path: "{{ repo_path }}/playbooks/backup"
+      register: iosxe_config_output
+      when: ansible_network_os is defined and ansible_network_os == 'iosxe'
+      
+    # Cisco IOS-XR devices
+    - name: Get configuration (Cisco IOS-XR)
+      cisco.iosxr.iosxr_config:
+        backup: yes
+        backup_options:
+          filename: "{{ inventory_hostname }}_config.{{ current_date }}"
+          dir_path: "{{ repo_path }}/playbooks/backup"
+      register: iosxr_config_output
+      when: ansible_network_os is defined and ansible_network_os == 'iosxr'
+      
+    # Cisco ASA devices
+    - name: Get configuration (Cisco ASA)
+      cisco.asa.asa_config:
+        backup: yes
+        backup_options:
+          filename: "{{ inventory_hostname }}_config.{{ current_date }}"
+          dir_path: "{{ repo_path }}/playbooks/backup"
+      register: asa_config_output
+      when: ansible_network_os is defined and ansible_network_os == 'asa'
+    
+    # Dell OS6 devices
+    - name: Get configuration (Dell OS6)
+      dellemc.os6.os6_config:
+        backup: yes
+        backup_options:
+          filename: "{{ inventory_hostname }}_config.{{ current_date }}"
+          dir_path: "{{ repo_path }}/playbooks/backup"
+      register: dell_os6_config_output
+      when: ansible_network_os is defined and ansible_network_os == 'dellemc.os6.os6'
+    
+    # Dell OS10 devices
+    - name: Get configuration (Dell OS10)
+      dellemc.os10.os10_config:
+        backup: yes
+        backup_options:
+          filename: "{{ inventory_hostname }}_config.{{ current_date }}"
+          dir_path: "{{ repo_path }}/playbooks/backup"
+      register: dell_os10_config_output
+      when: ansible_network_os is defined and ansible_network_os == 'dellemc.os10.os10'
+      
+    # Juniper devices
+    - name: Get configuration (Juniper)
+      junipernetworks.junos.junos_config:
+        backup: yes
+        backup_options:
+          filename: "{{ inventory_hostname }}_config.{{ current_date }}"
+          dir_path: "{{ repo_path }}/playbooks/backup"
+      register: juniper_config_output
+      when: ansible_network_os is defined and ansible_network_os == 'junipernetworks.junos.junos'
+      
+    # Fortinet devices
+    - name: Get configuration (Fortinet)
+      fortinet.fortios.fortios_config:
+        backup: yes
+        backup_options:
+          filename: "{{ inventory_hostname }}_config.{{ current_date }}"
+          dir_path: "{{ repo_path }}/playbooks/backup"
+      register: fortinet_config_output
+      when: ansible_network_os is defined and ansible_network_os == 'fortinet.fortios.fortios'
+      
+    # Arista devices
+    - name: Get configuration (Arista)
+      arista.eos.eos_config:
+        backup: yes
+        backup_options:
+          filename: "{{ inventory_hostname }}_config.{{ current_date }}"
+          dir_path: "{{ repo_path }}/playbooks/backup"
+      register: arista_config_output
+      when: ansible_network_os is defined and ansible_network_os == 'arista.eos.eos'
+    
+    # Additional vendor backup commands for those that don't support backup option
+    - name: Get configuration (Aruba AOS-Switch)
+      arubanetworks.aos_switch.aoscl_command:
+        commands:
+          - show running-config
+      register: aruba_aos_config_output
+      when: ansible_network_os is defined and ansible_network_os == 'arubanetworks.aos_switch.aoscl'
+    
+    - name: Get configuration (Aruba AOS-CX)
+      arubanetworks.aoscx.aoscx_command:
+        commands:
+          - show running-config
+      register: aruba_aoscx_config_output
+      when: ansible_network_os is defined and ansible_network_os == 'arubanetworks.aoscx.aoscx'
+    
+    - name: Get configuration (Palo Alto)
+      paloaltonetworks.panos.panos_command:
+        commands:
+          - show config running
+      register: paloalto_config_output
+      when: ansible_network_os is defined and ansible_network_os == 'paloaltonetworks.panos.panos'
+      
+    - name: Get configuration (SonicWall)
+      ansible.netcommon.net_command:
+        commands:
+          - show current-config
+      register: sonicwall_config_output
+      when: ansible_network_os is defined and ansible_network_os == 'sonicwall'
+      
+    # Save configurations for vendors without built-in backup
+    - name: Save Aruba AOS-Switch config to file
+      ansible.builtin.copy:
+        content: "{{ aruba_aos_config_output.stdout[0] | default('Command failed or no output') }}"
+        dest: "{{ repo_path }}/playbooks/backup/{{ inventory_hostname }}_config.{{ current_date }}"
+        mode: '0600'
+      delegate_to: localhost
+      when: ansible_network_os is defined and ansible_network_os == 'arubanetworks.aos_switch.aoscl' and aruba_aos_config_output.stdout is defined
+    
+    - name: Save Aruba AOS-CX config to file
+      ansible.builtin.copy:
+        content: "{{ aruba_aoscx_config_output.stdout[0] | default('Command failed or no output') }}"
+        dest: "{{ repo_path }}/playbooks/backup/{{ inventory_hostname }}_config.{{ current_date }}"
+        mode: '0600'
+      delegate_to: localhost
+      when: ansible_network_os is defined and ansible_network_os == 'arubanetworks.aoscx.aoscx' and aruba_aoscx_config_output.stdout is defined
+      
+    - name: Save Palo Alto config to file
+      ansible.builtin.copy:
+        content: "{{ paloalto_config_output.stdout[0] | default('Command failed or no output') }}"
+        dest: "{{ repo_path }}/playbooks/backup/{{ inventory_hostname }}_config.{{ current_date }}"
+        mode: '0600'
+      delegate_to: localhost
+      when: ansible_network_os is defined and ansible_network_os == 'paloaltonetworks.panos.panos' and paloalto_config_output.stdout is defined
+      
+    - name: Save SonicWall config to file
+      ansible.builtin.copy:
+        content: "{{ sonicwall_config_output.stdout[0] | default('Command failed or no output') }}"
+        dest: "{{ repo_path }}/playbooks/backup/{{ inventory_hostname }}_config.{{ current_date }}"
+        mode: '0600'
+      delegate_to: localhost
+      when: ansible_network_os is defined and ansible_network_os == 'sonicwall' and sonicwall_config_output.stdout is defined
+    
+    # Set permissions for all backup files
+    - name: Set permissions on backup files
+      ansible.builtin.shell: |
+        find {{ repo_path }}/playbooks/backup -type f -name "{{ inventory_hostname }}_config*" -exec chmod 600 {} \;
+      delegate_to: localhost
+    
+    # Git operations
+    - name: Git add and commit changes
+      ansible.builtin.shell: |
+        cd {{ repo_path }}
+        git add playbooks/backup/
+        git commit -m "Backup device configurations for {{ current_date }}"
+        git push origin main || git push origin main
+      delegate_to: localhost
+      run_once: true
+      ignore_errors: yes
