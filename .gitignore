@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Ansible
+*.retry
+ansible.log
+inventory/host_vars/*/vault.yml
+inventory/group_vars/*/vault.yml
+.vault_pass
+.vaultpass
+vault.key
+
+# Logs
+logs/
+*.log
+
+# Temp files
+*.swp
+*.swo
+*~
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Specific to this project
+.vault_password
