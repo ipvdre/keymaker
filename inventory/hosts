@@ -6,6 +6,7 @@
 
 # Locations will be added here
 [zion]
+Site-A ansible_host=10.1.2.2
 SwitchA ansible_host=10.1.5.2
 Central_Office ansible_host=10.1.1.2
 # devices will be added here
@@ -24,6 +25,7 @@ Central_Office ansible_host=10.1.1.2
 # Firewall devices will be added here
 
 [routers]
+Site-A
 Central_Office
 # Router devices will be added here
 
