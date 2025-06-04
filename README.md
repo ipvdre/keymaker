@@ -1,3 +1,17 @@
+# ⚠️ DEMO REPOSITORY DISCLAIMER
+
+**This repository is for demonstration purposes only.**
+
+- All credentials, passwords, and secrets are FAKE demo data
+- Network topology and devices are simulated lab environment
+- IP addresses are private RFC 1918 ranges for lab use
+- This code should NOT be used in production environments
+- Repository is locked to prevent unauthorized modifications
+
+For technical discussions, please contact [dre@ipvdre.tech].
+
+
+
 # Advanced Network Automation
 
 A comprehensive network automation solution for multivendor environments with secure credential management and detailed device categorization.
