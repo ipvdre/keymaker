@@ -6,7 +6,7 @@
 - Network topology and devices are simulated lab environment
 - IP addresses are private RFC 1918 ranges for lab use
 - This code should NOT be used in production environments
-- Repository is locked to prevent unauthorized modifications
+- Repository is a basic sketch of how I set up an ansible environment and is educational only.
 
 For technical discussions, please contact [dre@ipvdre.tech].
 
@@ -26,7 +26,6 @@ A comprehensive network automation solution for multivendor environments with se
   - Fortinet (FortiOS)
   - Arista (EOS)
   - Palo Alto (PAN-OS)
-  - SonicWall
 - **Device categorization**:
   - By location (geographical grouping)
   - By device type (firewalls, routers, layer2_switches, layer3_switches)
