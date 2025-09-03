@@ -6,7 +6,7 @@
 - Network topology and devices are simulated lab environment
 - IP addresses are private RFC 1918 ranges for lab use
 - This code should NOT be used in production environments
-- Repository is a basic sketch of how I set up an ansible environment and is educational only.
+- Repository is a basic sketch of how I set up an ansible environment(with the help of AI) and is educational only.
 
 For technical discussions, please contact [dre@ipvdre.tech].
 
